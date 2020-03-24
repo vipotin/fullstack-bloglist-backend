@@ -4,7 +4,7 @@ const app = express()
 const cors = require('cors')
 const mongoose = require('mongoose')
 const config = require('./utils/config')
-const logger = require('./utils/logger')
+//const logger = require('./utils/logger')
 const blogsRouter = require('./controllers/blogs')
 
 mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true})
