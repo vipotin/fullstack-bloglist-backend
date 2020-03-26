@@ -18,7 +18,30 @@ describe('GET /api/blogs tests', () => {
   }),
   test('the amount of returned blogs is correct', async () => {
     const response = await api.get('/api/blogs') 
-    expect(response.body.length).toBe(6)
+    expect(response.body.length).toBe(testData.listWithMultipleBlogs.length)
+  })
+})
+
+    
+
+describe('POST /api/blogs', () => {
+  test('a new blog is added', async () => {
+    const newBlog = {
+      title: 'How To Run A Successful Remote User Study',
+      author: 'John',
+      url: 'https://theuxblog.com/blog/remote-user-testing',
+      likes: 3
+    }
+    await api.post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const response = await api.get('/api/blogs')
+    const titles = response.body.map(b => b.title)
+
+    expect(response.body.length).toBe(testData.listWithMultipleBlogs.length + 1)
+    expect(titles).toContain('How To Run A Successful Remote User Study')
   })
 })
 
