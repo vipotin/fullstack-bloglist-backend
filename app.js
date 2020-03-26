@@ -7,6 +7,8 @@ const config = require('./utils/config')
 //const logger = require('./utils/logger')
 const blogsRouter = require('./controllers/blogs')
 
+mongoose.set('useFindAndModify', false)
+
 mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true})
 
 app.use(cors())
