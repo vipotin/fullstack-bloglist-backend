@@ -48,6 +48,19 @@ test('id format is correct', async () => {
   blogs.body.map(b => expect(b.id).toBeDefined())
 })
 
+test('the mount of likes equals 0 if value is not set', async () => {
+  const noLikesSet = {
+    title: 'How To Run A Successful Remote User Study',
+    author: 'John',
+    url: 'https://theuxblog.com/blog/remote-user-testing',
+  }
+  const response = await api.post('/api/blogs').send(noLikesSet)
+  console.log(response.body)
+  const blog = await api.get(`/api/blogs/${response.body.id}`)
+  console.log(blog)
+  expect(blog.body.likes).toBe(0)
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })
