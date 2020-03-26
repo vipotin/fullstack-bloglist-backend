@@ -10,7 +10,7 @@ beforeEach(async () => {
   await Blog.insertMany(testData.listWithMultipleBlogs)
 })
 
-describe('GET /api/blogs tests', () => {
+describe('GET /api/blogs', () => {
   test('all blogs are returned in json format', async () => {
     await api.get('/api/blogs')
       .expect(200)
@@ -21,8 +21,6 @@ describe('GET /api/blogs tests', () => {
     expect(response.body.length).toBe(testData.listWithMultipleBlogs.length)
   })
 })
-
-    
 
 describe('POST /api/blogs', () => {
   test('a new blog is added', async () => {
@@ -43,6 +41,11 @@ describe('POST /api/blogs', () => {
     expect(response.body.length).toBe(testData.listWithMultipleBlogs.length + 1)
     expect(titles).toContain('How To Run A Successful Remote User Study')
   })
+})
+
+test('id format is correct', async () => {
+  const blogs = await api.get('/api/blogs')
+  blogs.body.map(b => expect(b.id).toBeDefined())
 })
 
 afterAll(() => {
