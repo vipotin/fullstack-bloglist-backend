@@ -5,17 +5,19 @@ const mongoose = require('mongoose')
 const Blog = require('../models/blog')
 const testData = require('../utils/testdata')
 
-beforeEach(async () => {
-  await Blog.deleteMany({})
-  await Blog.insertMany(testData.listWithMultipleBlogs)
-})
 
 describe('GET /api/blogs', () => {
+  beforeEach(async () => {
+    await Blog.deleteMany({})
+    await Blog.insertMany(testData.listWithMultipleBlogs)
+  })
+
   test('all blogs are returned in json format', async () => {
     await api.get('/api/blogs')
       .expect(200)
       .expect('Content-Type', /application\/json/)
   }),
+
   test('the amount of returned blogs is correct', async () => {
     const response = await api.get('/api/blogs') 
     expect(response.body.length).toBe(testData.listWithMultipleBlogs.length)
@@ -41,6 +43,26 @@ describe('POST /api/blogs', () => {
     expect(response.body.length).toBe(testData.listWithMultipleBlogs.length + 1)
     expect(titles).toContain('How To Run A Successful Remote User Study')
   })
+
+  test('POST fails if title is empty', async () => {
+    const noTitle = {
+      author: 'John',
+      url: 'https://theuxblog.com/blog/remote-user-testing'
+    }
+    await api.post('/api/blogs')
+      .send(noTitle)
+      .expect(400)
+  })
+  
+  test('POST fails if url is empty', async () => {
+    const noUrl = {
+      author: 'John',
+      title: 'How To Run A Successful Remote User Study'
+    }
+    await api.post('/api/blogs')
+      .send(noUrl)
+      .expect(400)
+  })
 })
 
 test('id format is correct', async () => {
@@ -59,25 +81,7 @@ test('the amount of likes equals 0 if value is not set', async () => {
   expect(blog.body.likes).toBe(0)
 })
 
-test('POST fails if title is empty', async () => {
-  const noTitle = {
-    author: 'John',
-    url: 'https://theuxblog.com/blog/remote-user-testing'
-  }
-  await api.post('/api/blogs')
-    .send(noTitle)
-    .expect(400)
-})
 
-test('POST fails if url is empty', async () => {
-  const noUrl = {
-    author: 'John',
-    title: 'How To Run A Successful Remote User Study'
-  }
-  await api.post('/api/blogs')
-    .send(noUrl)
-    .expect(400)
-})
 
 afterAll(() => {
   mongoose.connection.close()

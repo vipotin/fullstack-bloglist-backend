@@ -1,5 +1,5 @@
 // Data
-const listWithOneBlog = [
+const oneBlog = [
   {
     _id: '5a422aa71b54a676234d17f8',
     title: 'Go To Statement Considered Harmful',
@@ -61,6 +61,6 @@ const listWithMultipleBlogs = [
 ]
 
 module.exports = {
-  listWithOneBlog, 
+  listWithOneBlog: oneBlog, 
   listWithMultipleBlogs
 }
