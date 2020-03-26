@@ -1,3 +1,5 @@
+const lodash = require('lodash')
+
 const dummy = () => {
   return 1
 }
@@ -17,11 +19,18 @@ const favoriteBlog = (blogs) => {
   if (blogs.length === 0) return 0
   
   const favorite = blogs.reduce(reducer)
-  
+
   return {
     title: favorite.title,
     author: favorite.author,
     likes: favorite.likes
+  }
+}
+
+// Template for 4.6*
+const mostBlogs = blogs => {
+  const sortedBlogs = lodash.sortBy(blogs, blog => blog.author)
+  const reducer = (object, currentBlog) => {
   }
 }
 
