@@ -5,6 +5,9 @@ const mongoose = require('mongoose')
 const Blog = require('../models/blog')
 const testData = require('../utils/testdata')
 
+beforeEach(async () => {
+  await Blog.deleteMany({})
+})
 
 describe('GET /api/blogs', () => {
   beforeEach(async () => {
@@ -25,6 +28,11 @@ describe('GET /api/blogs', () => {
 })
 
 describe('POST /api/blogs', () => {
+  beforeEach(async () => {
+    await Blog.deleteMany({})
+    await Blog.insertMany(testData.listWithMultipleBlogs)
+  })
+  
   test('a new blog is added', async () => {
     const newBlog = {
       title: 'How To Run A Successful Remote User Study',
@@ -81,8 +89,7 @@ test('the amount of likes equals 0 if value is not set', async () => {
   expect(blog.body.likes).toBe(0)
 })
 
-
-
 afterAll(() => {
+  Blog.deleteMany({})
   mongoose.connection.close()
 })
