@@ -24,6 +24,8 @@ loginRouter.post('/', async (request, response, next) => {
     }
   
     const token = jwt.sign(userToken, config.VALIDATION)
+
+    // console.log(token)
   
     response
       .status(200)
