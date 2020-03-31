@@ -32,7 +32,6 @@ describe('POST /api/blogs', () => {
   
   test('a new blog is added with authorized user', async () => {
     const user = testData.oneUser
-
     const loginResponse = await api.post('/api/login')
       .send(user)
     const token = `Bearer ${loginResponse.body.token}`
@@ -58,32 +57,51 @@ describe('POST /api/blogs', () => {
   })
 
   test('POST fails if title is empty', async () => {
+    const user = testData.oneUser
+    const loginResponse = await api.post('/api/login')
+      .send(user)
+    const token = `Bearer ${loginResponse.body.token}`
+
     const noTitle = {
       author: 'John',
       url: 'https://theuxblog.com/blog/remote-user-testing'
     }
     await api.post('/api/blogs')
       .send(noTitle)
+      .set('authorization', token)
       .expect(400)
   })
   
   test('POST fails if url is empty', async () => {
+    const user = testData.oneUser
+    const loginResponse = await api.post('/api/login')
+      .send(user)
+    const token = `Bearer ${loginResponse.body.token}`
+
     const noUrl = {
       author: 'John',
       title: 'How To Run A Successful Remote User Study'
     }
     await api.post('/api/blogs')
       .send(noUrl)
+      .set('authorization', token)
       .expect(400)
   })
 
   test('the amount of likes equals 0 if value is not set', async () => {
+    const user = testData.oneUser
+    const loginResponse = await api.post('/api/login')
+      .send(user)
+    const token = `Bearer ${loginResponse.body.token}`
+
     const noLikesSet = {
       title: 'How To Run A Successful Remote User Study',
       author: 'John',
       url: 'https://theuxblog.com/blog/remote-user-testing'
     }
-    const response = await api.post('/api/blogs').send(noLikesSet)
+    const response = await api.post('/api/blogs')
+      .send(noLikesSet)
+      .set('authorization', token)
     const blog = await api.get(`/api/blogs/${response.body.id}`)
     expect(blog.body.likes).toBe(0)
   })
