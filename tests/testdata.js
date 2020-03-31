@@ -63,6 +63,12 @@ const listWithMultipleBlogs = [
   }
 ]
 
+const oneUser = {
+  username: 'newuser',
+  name: 'New User',
+  password: 'addnew'
+}
+
 const nonExistingId = async () => {
   const note = new Blog({ title: 'willremovethissoon' })
   await note.save()
@@ -85,6 +91,7 @@ const usersInDb = async () => {
 module.exports = {
   oneBlog, 
   listWithMultipleBlogs,
+  oneUser,
   nonExistingId, 
   blogsInDb,
   usersInDb

@@ -5,10 +5,6 @@ const mongoose = require('mongoose')
 const Blog = require('../models/blog')
 const testData = require('./testdata')
 
-beforeEach(async () => {
-  await Blog.deleteMany({})
-})
-
 describe('GET /api/blogs', () => {
   beforeEach(async () => {
     await Blog.deleteMany({})
@@ -31,17 +27,26 @@ describe('POST /api/blogs', () => {
   beforeEach(async () => {
     await Blog.deleteMany({})
     await Blog.insertMany(testData.listWithMultipleBlogs)
+    await api.post('/api/users').send(testData.oneUser)
   })
   
-  test('a new blog is added', async () => {
+  test('a new blog is added with authorized user', async () => {
+    const user = testData.oneUser
+
+    const loginResponse = await api.post('/api/login')
+      .send(user)
+    const token = `Bearer ${loginResponse.body.token}`
+
     const newBlog = {
       title: 'How To Run A Successful Remote User Study',
       author: 'John',
       url: 'https://theuxblog.com/blog/remote-user-testing',
       likes: 3
     }
+
     await api.post('/api/blogs')
       .send(newBlog)
+      .set('authorization', token)
       .expect(201)
       .expect('Content-Type', /application\/json/)
 
@@ -71,22 +76,22 @@ describe('POST /api/blogs', () => {
       .send(noUrl)
       .expect(400)
   })
+
+  test('the amount of likes equals 0 if value is not set', async () => {
+    const noLikesSet = {
+      title: 'How To Run A Successful Remote User Study',
+      author: 'John',
+      url: 'https://theuxblog.com/blog/remote-user-testing'
+    }
+    const response = await api.post('/api/blogs').send(noLikesSet)
+    const blog = await api.get(`/api/blogs/${response.body.id}`)
+    expect(blog.body.likes).toBe(0)
+  })
 })
 
 test('id format is correct', async () => {
   const blogs = await api.get('/api/blogs')
   blogs.body.map(b => expect(b.id).toBeDefined())
-})
-
-test('the amount of likes equals 0 if value is not set', async () => {
-  const noLikesSet = {
-    title: 'How To Run A Successful Remote User Study',
-    author: 'John',
-    url: 'https://theuxblog.com/blog/remote-user-testing'
-  }
-  const response = await api.post('/api/blogs').send(noLikesSet)
-  const blog = await api.get(`/api/blogs/${response.body.id}`)
-  expect(blog.body.likes).toBe(0)
 })
 
 afterAll(() => {
