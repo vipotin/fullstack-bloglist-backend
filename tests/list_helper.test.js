@@ -107,3 +107,17 @@ describe('total likes', () => {
     expect(listHelper.totalLikes([])).toBe(0)
   })
 })
+
+describe('most blogs', () => {  
+  test('one blog', () => {
+    const result = listHelper.mostBlogs(listWithOneBlog)
+    expect(result.author).toBe('Edsger W. Dijkstra')
+    expect(result.blogs).toBe(1)
+  })
+
+  test('multiple blogs', () => {
+    const result = listHelper.mostBlogs(listWithMultipleBlogs)
+    expect(result.author).toBe('Robert C. Martin')
+    expect(result.blogs).toBe(3)
+  })
+})

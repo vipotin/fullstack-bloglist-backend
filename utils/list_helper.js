@@ -27,15 +27,47 @@ const favoriteBlog = (blogs) => {
   }
 }
 
-// Template for 4.6*
 const mostBlogs = blogs => {
+
+  if (blogs.length === 1) {
+    return {
+      author: blogs[0].author,
+      blogs: 1
+    }
+  }
   const sortedBlogs = lodash.sortBy(blogs, blog => blog.author)
-  const reducer = (object, currentBlog) => {
+
+  let obj = {
+    maxCount: 0,
+    maxAuthor: '',
+    count: 0,
+    previousAuthor: ''
+  }
+
+  sortedBlogs.forEach((blog, i, arr) => {  
+    const isLastItem = i === arr.length - 1
+    if (obj.previousAuthor !== blog.author || isLastItem) {
+      if (isLastItem) {
+        obj.count++
+      }
+      if (obj.count > obj.maxCount) {
+        obj.maxCount = obj.count
+        obj.maxAuthor = obj.previousAuthor
+      }
+      obj.count = 0
+    }
+    obj.count++
+    obj.previousAuthor = blog.author
+  })
+  return {
+    author: obj.maxAuthor,
+    blogs: obj.maxCount
   }
 }
 
 module.exports = {
   dummy,
   totalLikes,
-  favoriteBlog
+  favoriteBlog,
+  mostBlogs
 }
