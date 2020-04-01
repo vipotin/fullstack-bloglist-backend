@@ -27,41 +27,41 @@ const favoriteBlog = (blogs) => {
   }
 }
 
-const mostBlogs = blogs => {
+const mostBlogs= blogs => {
+  const authors = lodash.groupBy(blogs, b => b.author)
+  let max = 0
+  let mostBlogsAuthor = ''
 
-  if (blogs.length === 1) {
-    return {
-      author: blogs[0].author,
-      blogs: 1
+  for (const author in authors) {
+    const count = authors[author].length
+    if (count > max) {
+      max = count
+      mostBlogsAuthor = author
     }
   }
-  const sortedBlogs = lodash.sortBy(blogs, blog => blog.author)
-
-  let obj = {
-    maxCount: 0,
-    maxAuthor: '',
-    count: 0,
-    previousAuthor: ''
-  }
-
-  sortedBlogs.forEach((blog, i, arr) => {  
-    const isLastItem = i === arr.length - 1
-    if (obj.previousAuthor !== blog.author || isLastItem) {
-      if (isLastItem) {
-        obj.count++
-      }
-      if (obj.count > obj.maxCount) {
-        obj.maxCount = obj.count
-        obj.maxAuthor = obj.previousAuthor
-      }
-      obj.count = 0
-    }
-    obj.count++
-    obj.previousAuthor = blog.author
-  })
   return {
-    author: obj.maxAuthor,
-    blogs: obj.maxCount
+    author: mostBlogsAuthor,
+    blogs: max
+  }
+}
+
+const mostLikes = blogs => {
+  const reducer = (sum, value) => sum + value
+
+  const authors = lodash.groupBy(blogs, b => b.author)
+  let maxLikes = 0
+  let likedAuthor = ''
+
+  for (const author in authors) {
+    const likes = authors[author].map(b => b.likes).reduce(reducer)
+    if (likes > maxLikes) {
+      maxLikes = likes
+      likedAuthor = author
+    }
+  }
+  return {
+    author: likedAuthor,
+    likes: maxLikes
   }
 }
 
@@ -69,5 +69,6 @@ module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
-  mostBlogs
+  mostBlogs,
+  mostLikes
 }
