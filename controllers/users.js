@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt')
 const usersRouter = require('express').Router()
 const User = require('../models/user')
+const passwordMinLength = 3
 
 usersRouter.get('/', async (request, response) => {
   const users = await User.find({})
@@ -13,6 +14,9 @@ usersRouter.post('/', async (request, response, next) => {
   try {
     const body = request.body
     const saltRounds = 10
+    if (body.password.length <= passwordMinLength) {
+      return response.status(400).send({ error: 'Password too short. Minimum length is 3.' })
+    }
     const passwordHash = await bcrypt.hash(body.password, saltRounds)
   
     const user = new User({
@@ -23,8 +27,8 @@ usersRouter.post('/', async (request, response, next) => {
   
     const savedUser = await user.save()
     response.json(savedUser)
-  } catch (exeption) {
-    next(exeption)
+  } catch (exception) {
+    next(exception)
   }
 
 })
