@@ -15,7 +15,7 @@ blogsRouter.get('/', async (request, response, next) => {
 
 blogsRouter.get('/:id', async (request, response, next) => {
   try {
-    const blog = await Blog.findById(request.params.id)
+    const blog = await Blog.findById(request.params.id).populate('user', { username: 1, name: 1 })
     if (blog) {
       response.json(blog.toJSON())
     } else {
@@ -56,7 +56,6 @@ blogsRouter.put('/:id', async (request, response, next) => {
 
 blogsRouter.delete('/:id', async (request, response, next) => {
   try {
-    console.log(request.token)
     const decodedToken = jwt.verify(request.token, process.env.VALIDATION)
     const user = await User.findById(decodedToken.id)
     const blog = await Blog.findById(request.params.id)
